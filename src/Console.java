@@ -33,6 +33,21 @@ public class Console {
 		writeMessage(board.toString());
 	}
 
+	public void printBoards(Board ownBoard, Board enemyBoard) {
+		String[] ownBoardLines = ownBoard.toString().split("\n");
+		String[] enemyBoardLines = enemyBoard.toString().split("\n");
+
+		System.out.printf("Board%28sRadar\n", "");
+		for (int i = 0; i < ownBoardLines.length; i++) {
+			System.out.printf(
+					"%23s%10s%23s\n",
+					ownBoardLines[i],
+					"",
+					enemyBoardLines[i]
+			);
+		}
+	}
+
 	public Field askForShot(String name) {
 		while (true) {
 			System.out.print("Where do you want to shoot " + name + "? ");

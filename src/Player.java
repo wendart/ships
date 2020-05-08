@@ -10,7 +10,6 @@ public class Player {
 	private List<Ship> ships = new ArrayList<>();
 	private boolean alive = true;
 
-
 	public Player(String name, Console console) {
 		this.name = name;
 		this.console = console;
@@ -75,10 +74,7 @@ public class Player {
 	}
 
 	public void showBoards() {
-		console.writeMessage("Your Ships");
-		console.printBoard(ownBoard);
-		console.writeMessage("Radar");
-		console.printBoard(enemyBoard);
+		console.printBoards(ownBoard, enemyBoard);
 	}
 
 	public Field shoot() {
