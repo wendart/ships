@@ -2,10 +2,10 @@ public class Board {
 
 	public State markShot(Field shotPlacement) {
 		if (isFieldEmpty(shotPlacement)) {
-			//setField(shotPlacement, State.MISS);
+			setField(shotPlacement, State.MISS);
 			return State.MISS;
 		} else {
-			//setField(shotPlacement, State.HIT);
+			setField(shotPlacement, State.HIT);
 			return State.HIT;
 		}
 	}
@@ -48,11 +48,13 @@ public class Board {
 			sb.append(String.format("%2s", i + 1)).append(" ");
 			for (int j = 0; j < board.length; j++) {
 				if (board[j][i] == State.EMPTY) {
-					sb.append(". ");
+					sb.append("  ");
 				} else if (board[j][i] == State.MISS) {
-					sb.append("O ");
+					sb.append(GameChars.MISS + " ");
+				} else if (board[j][i] == State.HIT){
+					sb.append(GameChars.SHIP_HIT + " ");
 				} else {
-					sb.append("X ");
+					sb.append(GameChars.SHIP_MAST + " ");
 				}
 			}
 			sb.append("\n");

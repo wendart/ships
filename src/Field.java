@@ -43,7 +43,7 @@ public class Field {
 	public Field(String field) {
 
 		Objects.requireNonNull(field, "Field can not be null");
-		field = field.trim();
+		field = field.trim().toUpperCase();
 
 		if (field.length() < 2 || field.length() > 3) {
 			throw new IllegalArgumentException("Illegal field format: " + field);

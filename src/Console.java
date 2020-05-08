@@ -58,4 +58,14 @@ public class Console {
 			}
 		}
 	}
+
+	public void getChar() {
+		scan.nextLine();
+	}
+
+	public void writeEnters() {
+		for (int i = 0; i < 37; i++) {
+			System.out.println();
+		}
+	}
 }

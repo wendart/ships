@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -5,7 +6,7 @@ public class Engine {
 
 	public final static int BOARD_SIZE = 10;
 	public final static List<ShipSpec> SHIP_SPEC = Arrays.asList(
-			//new ShipSpec(1,4),
+			//new ShipSpec(1,4)
 			//new ShipSpec(2,3),
 			//new ShipSpec(3,2),
 			new ShipSpec(4, 1)
@@ -48,9 +49,11 @@ public class Engine {
 
 			if (shotResult.getHitMark() == ShotResult.ShotMark.MISS) {
 				console.writeMessage("MISS");
+				console.getChar();
 				Player swap = activePlayer;
 				activePlayer = passivePlayer;
 				passivePlayer = swap;
+				console.writeEnters();
 			} else if (shotResult.getHitMark() == ShotResult.ShotMark.HIT) {
 				console.writeMessage("HIT");
 			} else {
