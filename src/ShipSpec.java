@@ -1,17 +1,17 @@
 public class ShipSpec {
-    private int mastCount;
-    private int shipCount;
+	private int mastCount;
+	private int shipCount;
 
-    public ShipSpec(int mastCount, int shipCount) {
-        this.mastCount = mastCount;
-        this.shipCount = shipCount;
-    }
+	public ShipSpec(int mastCount, int shipCount) {
+		this.mastCount = mastCount;
+		this.shipCount = shipCount;
+	}
 
-    public int getMastCount() {
-        return mastCount;
-    }
+	public int getMastCount() {
+		return mastCount;
+	}
 
-    public int getShipCount() {
-        return shipCount;
-    }
+	public int getShipCount() {
+		return shipCount;
+	}
 }
