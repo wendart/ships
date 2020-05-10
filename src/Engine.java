@@ -21,9 +21,18 @@ public class Engine {
 		do {
 			setupGame();
 			playGame();
+			congratulateWinner();
 			playAgain = askIfPlayAgain();
 		} while (playAgain);
 
+	}
+
+	private void congratulateWinner() {
+		if(!player1.isAlive()){
+			console.writeMessage("The winner is " + player2.getName() + "\n CONGRATULATIONS \n\n");
+		} else {
+			console.writeMessage("The winner is " + player1.getName() + "\n CONGRATULATIONS \n\n");
+		}
 	}
 
 	private boolean askIfPlayAgain() {
