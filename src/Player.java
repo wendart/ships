@@ -77,10 +77,10 @@ public class Player {
 		console.printBoards(ownBoard, enemyBoard);
 	}
 
-	public Field shoot() {
+	public String shoot() {
 		while (true) {
-			Field shotPlacement = console.askForShot(name);
-			if (enemyBoard.isFieldEmpty(shotPlacement)) {
+			String shotPlacement = console.askForShot(name);
+			if (enemyBoard.isFieldEmpty(new Field(shotPlacement))) {
 				return shotPlacement;
 			}
 			console.writeMessage("You've already shot here ;) ");

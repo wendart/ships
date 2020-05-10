@@ -28,7 +28,7 @@ public class Engine {
 	}
 
 	private void congratulateWinner() {
-		if(!player1.isAlive()){
+		if (!player1.isAlive()) {
 			console.writeMessage("The winner is " + player2.getName() + "\n CONGRATULATIONS \n\n");
 		} else {
 			console.writeMessage("The winner is " + player1.getName() + "\n CONGRATULATIONS \n\n");
@@ -55,33 +55,44 @@ public class Engine {
 
 		while (player1.isAlive() && player2.isAlive()) {
 			activePlayer.showBoards();
-			Field shotPlacement = activePlayer.shoot();
-			ShotResult shotResult = passivePlayer.checkShot(shotPlacement);
-			if (shotResult.getHitMark() == ShotResult.ShotMark.SINK) {
-				passivePlayer.shipDeletion(shotResult.getShip());
-			}
-			activePlayer.markShot(shotResult, shotPlacement);
+			String shotPlacement = activePlayer.shoot();
+			if (!saveGame(shotPlacement)) {
+				Field shotPlacementField = new Field(shotPlacement);
+				ShotResult shotResult = passivePlayer.checkShot(shotPlacementField);
+				if (shotResult.getHitMark() == ShotResult.ShotMark.SINK) {
+					passivePlayer.shipDeletion(shotResult.getShip());
+				}
+				activePlayer.markShot(shotResult, shotPlacementField);
 
-			if (shotResult.getHitMark() == ShotResult.ShotMark.MISS) {
-				console.writeMessage("MISS");
-				console.getChar();
-				Player swap = activePlayer;
-				activePlayer = passivePlayer;
-				passivePlayer = swap;
-				console.writeEnters();
-			} else if (shotResult.getHitMark() == ShotResult.ShotMark.HIT) {
-				console.writeMessage("HIT");
-			} else {
-				console.writeMessage("SINK");
+				if (shotResult.getHitMark() == ShotResult.ShotMark.MISS) {
+					console.writeMessage("MISS");
+					console.getChar();
+					Player swap = activePlayer;
+					activePlayer = passivePlayer;
+					passivePlayer = swap;
+					console.writeEnters();
+				} else if (shotResult.getHitMark() == ShotResult.ShotMark.HIT) {
+					console.writeMessage("HIT");
+				} else {
+					console.writeMessage("SINK");
+				}
+			} else
+			{
+				System.out.println("DZIAłaaaaaaaaaaaaaaaaaaaa");
 			}
+
 		}
 
 
 	}
 
+	private boolean saveGame(String decision) {
+		return decision.equals("SAVE");
+	}
+
 
 	private void setupGame(boolean playAgain) {
-		if(!playAgain) {
+		if (!playAgain) {
 			player1 = new Player(console.askForName(), console);
 			player2 = new Player(console.askForName(), console);
 		}
