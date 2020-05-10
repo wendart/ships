@@ -44,7 +44,7 @@ public class Player {
 
 		while (!done) {
 			try {
-				FieldRange shipPlacement = console.askForShipPlacement(shipSpec.getMastCount());
+				FieldRange shipPlacement = console.askForShipPlacement(shipSpec.getMastCount(), getName());
 				Ship ship = new Ship(shipPlacement);
 
 				if (ship.getSize() != shipSpec.getMastCount()) {

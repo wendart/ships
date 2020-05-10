@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,7 +27,16 @@ public class Engine {
 	}
 
 	private boolean askIfPlayAgain() {
-		return false;
+
+		console.writeMessage("Do you want to play again? [YES] [NO]");
+		String playAgain = new String("");
+		do {
+			playAgain = console.getNewLine();
+			playAgain = playAgain.trim();
+			playAgain = playAgain.toUpperCase();
+		} while (!playAgain.equals("YES") && !playAgain.equals("NO"));
+
+		return playAgain.equals("YES");
 	}
 
 	private void playGame() {
@@ -44,8 +52,6 @@ public class Engine {
 				passivePlayer.shipDeletion(shotResult.getShip());
 			}
 			activePlayer.markShot(shotResult, shotPlacement);
-
-			//activePlayer.showBoards();
 
 			if (shotResult.getHitMark() == ShotResult.ShotMark.MISS) {
 				console.writeMessage("MISS");
@@ -70,7 +76,11 @@ public class Engine {
 		player2 = new Player(console.askForName(), console);
 
 		player1.prepareBoard();
+		console.getChar();
+		console.writeEnters();
 		player2.prepareBoard();
+		console.getChar();
+		console.writeEnters();
 	}
 
 }

@@ -9,9 +9,9 @@ public class Console {
 		return scan.nextLine();
 	}
 
-	public FieldRange askForShipPlacement(int shipSize) {
+	public FieldRange askForShipPlacement(int shipSize, String name) {
 		while (true) {
-			System.out.print("Place " + shipSize + " mast ship: ");
+			System.out.print(name + ", please place " + shipSize + " mast ship: ");
 			String placement = scan.nextLine();
 			try {
 				if (shipSize == 1) {
@@ -67,5 +67,9 @@ public class Console {
 		for (int i = 0; i < 37; i++) {
 			System.out.println();
 		}
+	}
+
+	public String getNewLine() {
+		return scan.nextLine();
 	}
 }
