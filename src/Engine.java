@@ -19,7 +19,7 @@ public class Engine {
 	public void start() {
 		boolean playAgain = false;
 		do {
-			setupGame();
+			setupGame(playAgain);
 			playGame();
 			congratulateWinner();
 			playAgain = askIfPlayAgain();
@@ -80,9 +80,11 @@ public class Engine {
 	}
 
 
-	private void setupGame() {
-		player1 = new Player(console.askForName(), console);
-		player2 = new Player(console.askForName(), console);
+	private void setupGame(boolean playAgain) {
+		if(!playAgain) {
+			player1 = new Player(console.askForName(), console);
+			player2 = new Player(console.askForName(), console);
+		}
 
 		player1.prepareBoard();
 		console.getChar();
