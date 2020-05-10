@@ -80,10 +80,15 @@ public class Player {
 	public String shoot() {
 		while (true) {
 			String shotPlacement = console.askForShot(name);
-			if (enemyBoard.isFieldEmpty(new Field(shotPlacement))) {
+			if(!shotPlacement.equals("SAVE")) {
+				if (enemyBoard.isFieldEmpty(new Field(shotPlacement))) {
+					return shotPlacement;
+				}
+				console.writeMessage("You've already shot here ;) ");
+			} else {
 				return shotPlacement;
 			}
-			console.writeMessage("You've already shot here ;) ");
+
 		}
 	}
 
