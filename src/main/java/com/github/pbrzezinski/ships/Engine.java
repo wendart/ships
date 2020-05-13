@@ -1,5 +1,12 @@
 package com.github.pbrzezinski.ships;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pbrzezinski.ships.state.GameState;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -55,10 +62,10 @@ public class Engine {
 		Player activePlayer = player1;
 		Player passivePlayer = player2;
 
-		while (player1.isAlive() && player2.isAlive()) {
+		while (player1.isAlive() && player2.isAlive()) {//TODO is game in progress
 			activePlayer.showBoards();
 			String shotPlacement = activePlayer.shoot();
-			if (!saveGame(shotPlacement)) {
+			if (!wantSaveGame(shotPlacement)) {
 				Field shotPlacementField = new Field(shotPlacement);
 				ShotResult shotResult = passivePlayer.checkShot(shotPlacementField);
 				if (shotResult.getHitMark() == ShotResult.ShotMark.SINK) {
@@ -78,9 +85,8 @@ public class Engine {
 				} else {
 					console.writeMessage("SINK");
 				}
-			} else
-			{
-				System.out.println("DZIAłaaaaaaaaaaaaaaaaaaaa");
+			} else {
+				saveGame(activePlayer);
 			}
 
 		}
@@ -88,8 +94,28 @@ public class Engine {
 
 	}
 
-	private boolean saveGame(String decision) {
+	private boolean wantSaveGame(String decision) {
 		return decision.equals("SAVE");
+	}
+
+
+	private void saveGame(Player activePlayer) {
+		GameState gameState = new GameState(
+				player1.save(player1 == activePlayer),
+				player2.save(player2 == activePlayer)
+		);
+
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			byte[] bytes = objectMapper.writeValueAsBytes(gameState);
+			Files.write(
+					Paths.get("GameState.json"),
+					bytes
+			);
+		} catch (IOException e) {
+			System.err.println("Critical save error");
+		}
+
 	}
 
 

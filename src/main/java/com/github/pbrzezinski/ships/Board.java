@@ -1,5 +1,8 @@
 package com.github.pbrzezinski.ships;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Board {
 
 	public State markShot(Field shotPlacement) {
@@ -10,6 +13,18 @@ public class Board {
 			setField(shotPlacement, State.HIT);
 			return State.HIT;
 		}
+	}
+
+	public List<State> save() {
+		List<State> state = new ArrayList<>();
+
+		for (int y = 0; y < board.length; y++) {
+			for (int x = 0; x < board.length; x++) {
+				state.add(board[x][y]);
+			}
+		}
+
+		return state;
 	}
 
 	public enum State {
@@ -46,14 +61,14 @@ public class Board {
 		StringBuilder sb = new StringBuilder();
 		sb.append("   A B C D E F G H I J \n");
 
-		for (int i = 0; i < board.length; i++) {
-			sb.append(String.format("%2s", i + 1)).append(" ");
-			for (int j = 0; j < board.length; j++) {
-				if (board[j][i] == State.EMPTY) {
+		for (int y = 0; y < board.length; y++) {
+			sb.append(String.format("%2s", y + 1)).append(" ");
+			for (int x = 0; x < board.length; x++) {
+				if (board[x][y] == State.EMPTY) {
 					sb.append("  ");
-				} else if (board[j][i] == State.MISS) {
+				} else if (board[x][y] == State.MISS) {
 					sb.append(GameChars.MISS + " ");
-				} else if (board[j][i] == State.HIT){
+				} else if (board[x][y] == State.HIT) {
 					sb.append(GameChars.SHIP_HIT + " ");
 				} else {
 					sb.append(GameChars.SHIP_MAST + " ");

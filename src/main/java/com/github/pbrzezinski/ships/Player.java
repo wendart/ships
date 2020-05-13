@@ -1,5 +1,7 @@
 package com.github.pbrzezinski.ships;
 
+import com.github.pbrzezinski.ships.state.PlayerState;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +12,6 @@ public class Player {
 	private Board ownBoard = new Board();
 	private Board enemyBoard = new Board();
 	private List<Ship> ships = new ArrayList<>();
-	private boolean alive = true;
 
 	public Player(String name, Console console) {
 		this.name = name;
@@ -32,12 +33,7 @@ public class Player {
 	}
 
 	public boolean isAlive() {
-		if (ships.isEmpty()) {
-			alive = false;
-		} else {
-			alive = true;
-		}
-		return alive;
+		return !ships.isEmpty();
 	}
 
 	private void placeShip(ShipSpec shipSpec) {
@@ -139,5 +135,15 @@ public class Player {
 		} else {
 			enemyBoard.setField(shotPlacement, Board.State.MISS);
 		}
+	}
+
+
+	public PlayerState save(Boolean active){
+		return new PlayerState(
+				name,
+				ownBoard.save(),
+				enemyBoard.save(),
+				active
+		);
 	}
 }
