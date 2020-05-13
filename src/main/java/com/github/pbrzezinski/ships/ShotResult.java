@@ -1,3 +1,5 @@
+package com.github.pbrzezinski.ships;
+
 public class ShotResult {
 
 	public enum ShotMark {

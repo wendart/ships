@@ -1,3 +1,5 @@
+package com.github.pbrzezinski.ships;
+
 public class Main {
 
 	public static void main(String[] args) {

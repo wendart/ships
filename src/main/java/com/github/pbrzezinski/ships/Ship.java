@@ -1,3 +1,5 @@
+package com.github.pbrzezinski.ships;
+
 import java.util.List;
 
 public class Ship {
@@ -9,7 +11,7 @@ public class Ship {
 
 		placement = shipPlacement;
 		if (!placement.isOneFieldWide()) {
-			throw new IllegalArgumentException("Ship must be one field wide");
+			throw new IllegalArgumentException("com.github.pbrzezinski.ships.Ship must be one field wide");
 		}
 	}
 

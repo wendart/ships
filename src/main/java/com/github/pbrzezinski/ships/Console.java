@@ -1,3 +1,5 @@
+package com.github.pbrzezinski.ships;
+
 import java.util.Scanner;
 
 public class Console {
@@ -37,7 +39,7 @@ public class Console {
 		String[] ownBoardLines = ownBoard.toString().split("\n");
 		String[] enemyBoardLines = enemyBoard.toString().split("\n");
 
-		System.out.printf("Board%28sRadar\n", "");
+		System.out.printf("com.github.pbrzezinski.ships.Board%28sRadar\n", "");
 		for (int i = 0; i < ownBoardLines.length; i++) {
 			System.out.printf(
 					"%23s%10s%23s\n",

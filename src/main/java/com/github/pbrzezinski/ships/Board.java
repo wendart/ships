@@ -1,3 +1,5 @@
+package com.github.pbrzezinski.ships;
+
 public class Board {
 
 	public State markShot(Field shotPlacement) {

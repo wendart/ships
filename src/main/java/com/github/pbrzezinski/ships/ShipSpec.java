@@ -1,3 +1,5 @@
+package com.github.pbrzezinski.ships;
+
 public class ShipSpec {
 	private int mastCount;
 	private int shipCount;
