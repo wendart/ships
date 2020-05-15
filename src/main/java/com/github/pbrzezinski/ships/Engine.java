@@ -23,6 +23,7 @@ public class Engine {
 	private final Console console = new Console();
 	private Player player1;
 	private Player player2;
+	private  boolean saved = false;
 
 
 	public void start() {
@@ -30,8 +31,13 @@ public class Engine {
 		do {
 			setupGame(playAgain);
 			playGame();
-			congratulateWinner();
-			playAgain = askIfPlayAgain();
+			if(saved) {
+				console.writeMessage("Thanks for playing your game is saved for next time");
+			}else
+			{
+				congratulateWinner();
+				playAgain = askIfPlayAgain();
+			}
 		} while (playAgain);
 
 	}
@@ -62,7 +68,7 @@ public class Engine {
 		Player activePlayer = player1;
 		Player passivePlayer = player2;
 
-		while (player1.isAlive() && player2.isAlive()) {//TODO is game in progress
+		while (isGameInProgress()) {//TODO is game in progress
 			activePlayer.showBoards();
 			String shotPlacement = activePlayer.shoot();
 			if (!wantSaveGame(shotPlacement)) {
@@ -87,11 +93,16 @@ public class Engine {
 				}
 			} else {
 				saveGame(activePlayer);
+				saved = true;
 			}
 
 		}
 
 
+	}
+
+	private boolean isGameInProgress() {
+		return player1.isAlive() && player2.isAlive() && !saved;
 	}
 
 	private boolean wantSaveGame(String decision) {
@@ -132,6 +143,8 @@ public class Engine {
 		console.getChar();
 		console.writeEnters();
 	}
+
+	private void loadGame
 
 }
 
