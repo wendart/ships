@@ -41,6 +41,17 @@ public class Board {
 		}
 	}
 
+	public Board(List<Board.State> places) {
+		int n = 0;
+
+		for (int y = 0; y < board.length; y++) {
+			for (int x = 0; x < board.length; x++) {
+				board[x][y] = places.get(x+n);
+			}
+			n = n +10;
+		}
+	}
+
 	public void setField(Field field, State result) {
 		board[field.getXCoordinate()][field.getYCoordinate()] = result;
 	}

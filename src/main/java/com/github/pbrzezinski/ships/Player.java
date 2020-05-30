@@ -18,6 +18,21 @@ public class Player {
 		this.console = console;
 	}
 
+	public Player(PlayerState playerState, Console console){
+
+		List<Ship> ships = new ArrayList<>();
+		for (String ship : playerState.getShips()) {
+			ships.add(new Ship(new FieldRange(ship)));
+		}
+
+		this.name = playerState.getName();
+		this.ownBoard = new Board(playerState.getBoard());
+		this.enemyBoard = new Board(playerState.getRadar());
+		this.ships = ships;
+		this.console = console;
+	}
+
+
 	public String getName() {
 		return name;
 	}
@@ -31,6 +46,8 @@ public class Player {
 			}
 		}
 	}
+
+
 
 	public boolean isAlive() {
 		return !ships.isEmpty();
@@ -139,10 +156,17 @@ public class Player {
 
 
 	public PlayerState save(Boolean active){
+
+		List<String> stringShips = new ArrayList<>();
+		for (Ship ship : ships) {
+			stringShips.add(ship.getPlacement().getAsString());
+		}
+
 		return new PlayerState(
 				name,
 				ownBoard.save(),
 				enemyBoard.save(),
+				stringShips,
 				active
 		);
 	}

@@ -1,11 +1,11 @@
 package com.github.pbrzezinski.ships;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pbrzezinski.ships.state.GameState;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +23,9 @@ public class Engine {
 	private final Console console = new Console();
 	private Player player1;
 	private Player player2;
-	private  boolean saved = false;
+	private Player passivePlayer;
+	private Player activePlayer;
+	private boolean saved = false;
 
 
 	public void start() {
@@ -31,10 +33,9 @@ public class Engine {
 		do {
 			setupGame(playAgain);
 			playGame();
-			if(saved) {
+			if (saved) {
 				console.writeMessage("Thanks for playing your game is saved for next time");
-			}else
-			{
+			} else {
 				congratulateWinner();
 				playAgain = askIfPlayAgain();
 			}
@@ -53,7 +54,7 @@ public class Engine {
 	private boolean askIfPlayAgain() {
 
 		console.writeMessage("Do you want to play again? [YES] [NO]");
-		String playAgain = new String("");
+		String playAgain = "";
 		do {
 			playAgain = console.getNewLine();
 			playAgain = playAgain.trim();
@@ -64,11 +65,7 @@ public class Engine {
 	}
 
 	private void playGame() {
-
-		Player activePlayer = player1;
-		Player passivePlayer = player2;
-
-		while (isGameInProgress()) {//TODO is game in progress
+		while (isGameInProgress()) {
 			activePlayer.showBoards();
 			String shotPlacement = activePlayer.shoot();
 			if (!wantSaveGame(shotPlacement)) {
@@ -129,22 +126,75 @@ public class Engine {
 
 	}
 
-
-	private void setupGame(boolean playAgain) {
-		if (!playAgain) {
-			player1 = new Player(console.askForName(), console);
-			player2 = new Player(console.askForName(), console);
-		}
-
-		player1.prepareBoard();
-		console.getChar();
-		console.writeEnters();
-		player2.prepareBoard();
-		console.getChar();
-		console.writeEnters();
+	private boolean askIfLoadGame() {
+		console.writeMessage("Do you want to load previous game? ");
+		String decision = console.getNewLine();
+		decision = decision.toUpperCase();
+		return decision.equals("YES");
 	}
 
-	private void loadGame
+	private void setupGame(boolean playAgain) {
+
+
+		GameState gameState = loadGame();
+		if (gameState != null && askIfLoadGame()) {
+
+
+			player1 = new Player(gameState.getPlayer1(), console);
+			player2 = new Player(gameState.getPlayer2(), console);
+
+			if (gameState.getPlayer1().isActive()) {
+				activePlayer = player1;
+				passivePlayer = player2;
+			} else {
+				activePlayer = player2;
+				passivePlayer = player1;
+			}
+		} else {
+			if(gameState != null) {
+				try {
+					Files.delete(Paths.get("GameState.json"));
+				} catch (IOException e) {
+					System.err.println("Nothing to delete");;
+				}
+			}
+
+			if (!playAgain) {
+				player1 = new Player(console.askForName(), console);
+				player2 = new Player(console.askForName(), console);
+			}
+
+			player1.prepareBoard();
+			console.getChar();
+			console.writeEnters();
+			player2.prepareBoard();
+			console.getChar();
+			console.writeEnters();
+			activePlayer = player1;
+			passivePlayer = player2;
+		}
+
+
+	}
+
+	private GameState loadGame() {
+
+		try {
+			byte[] bytes = Files.readAllBytes(Paths.get("GameState.json"));
+
+			//GameState load = new GameState();
+
+			ObjectMapper objectMapper = new ObjectMapper();
+
+			return objectMapper.readValue(bytes, GameState.class);
+
+		} catch (IOException e) {
+			System.err.println("No previous game state");
+		}
+
+		return null;
+
+	}
 
 }
 

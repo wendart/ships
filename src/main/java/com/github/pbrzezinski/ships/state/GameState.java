@@ -7,6 +7,11 @@ public class GameState {
 	private PlayerState player1;
 	private PlayerState player2;
 
+
+	public GameState(){
+
+	}
+
 	@JsonCreator
 	public GameState(
 			@JsonProperty("player1") PlayerState player1,

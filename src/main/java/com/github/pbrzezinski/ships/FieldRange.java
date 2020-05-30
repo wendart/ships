@@ -93,4 +93,9 @@ public class FieldRange {
 		}
 		return extendedField;
 	}
+
+	public String getAsString() {
+		return lowerBoundary.getAsString()
+				+ ":" + upperBoundary.getAsString();
+	}
 }

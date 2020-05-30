@@ -1,5 +1,7 @@
 package com.github.pbrzezinski.ships;
 
+import jdk.nashorn.internal.runtime.JSONFunctions;
+
 public class ShotResult {
 
 	public enum ShotMark {

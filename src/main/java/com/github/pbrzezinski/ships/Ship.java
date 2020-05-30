@@ -1,5 +1,7 @@
 package com.github.pbrzezinski.ships;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.util.List;
 
 public class Ship {
