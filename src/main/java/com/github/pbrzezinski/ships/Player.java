@@ -5,7 +5,7 @@ import com.github.pbrzezinski.ships.state.PlayerState;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player {
+public class Player {//TODO REFACTOR
 
 	private String name;
 	private Console console;
@@ -92,16 +92,16 @@ public class Player {
 		console.printBoards(ownBoard, enemyBoard);
 	}
 
-	public String shoot() {
+	public PlayerDecision makeDecisionShootOrSave() {
 		while (true) {
 			String shotPlacement = console.askForShot(name);
 			if(!shotPlacement.equals("SAVE")) {
 				if (enemyBoard.isFieldEmpty(new Field(shotPlacement))) {
-					return shotPlacement;
+					return new PlayerDecision(shotPlacement);
 				}
 				console.writeMessage("You've already shot here ;) ");
 			} else {
-				return shotPlacement;
+				return new PlayerDecision(shotPlacement);
 			}
 
 		}

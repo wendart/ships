@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.List;
 
-public class Ship {
+public class Ship {//TODO EW STREAM
 
 	private FieldRange placement;
 

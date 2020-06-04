@@ -9,8 +9,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-public class Engine {
+public class Engine {// TODO WYDZIELIC KLASY
 
 	public final static int BOARD_SIZE = 10;
 	public final static List<ShipSpec> SHIP_SPEC = Arrays.asList(
@@ -20,9 +21,9 @@ public class Engine {
 			new ShipSpec(4, 1)
 	);
 
+	public static final Path GAME_STATE_PATH = Paths.get("GameState.json");
+
 	private final Console console = new Console();
-	private Player player1;
-	private Player player2;
 	private Player passivePlayer;
 	private Player activePlayer;
 	private boolean saved = false;
@@ -34,7 +35,7 @@ public class Engine {
 			setupGame(playAgain);
 			playGame();
 			if (saved) {
-				console.writeMessage("Thanks for playing your game is saved for next time");
+				console.writeMessage("Thanks for playing, your game is saved for next time");
 			} else {
 				congratulateWinner();
 				playAgain = askIfPlayAgain();
@@ -43,11 +44,67 @@ public class Engine {
 
 	}
 
+	private void setupGame(boolean playAgain) {
+		Optional<GameState> gameState = loadGameStateFromFile();
+		if (gameState.isPresent() && askIfLoadGame()) {
+			loadGame(gameState.get());
+			return;
+		}
+
+		deleteGameStateIfExists();
+
+		if (!playAgain) {
+			activePlayer = new Player(console.askForName(), console);
+			passivePlayer = new Player(console.askForName(), console);
+		}
+
+		preparePlayerBoard(activePlayer);
+		preparePlayerBoard(passivePlayer);
+	}
+
+	private void playGame() {
+		while (isGameInProgress()) {
+			playOneRound();
+		}
+	}
+
+	private void playOneRound() {
+		activePlayer.showBoards();
+		PlayerDecision decision = activePlayer.makeDecisionShootOrSave();
+		if (decision.isSaveGame()) {
+			saveGame();
+			return;
+		}
+
+		Field shotPlacementField = decision.toField();
+		ShotResult shotResult = passivePlayer.checkShot(shotPlacementField);
+		if (shotResult.getHitMark() == ShotResult.ShotMark.SINK) {
+			passivePlayer.shipDeletion(shotResult.getShip());
+			console.writeMessage("SINK");
+		}
+
+		activePlayer.markShot(shotResult, shotPlacementField);
+		if (shotResult.getHitMark() == ShotResult.ShotMark.MISS) {
+			console.writeMessage("MISS");
+			console.getChar();
+			console.writeEnters();
+			swapPlayers();
+		} else if (shotResult.getHitMark() == ShotResult.ShotMark.HIT) {
+			console.writeMessage("HIT");
+		}
+	}
+
+	private void swapPlayers() {
+		Player swap = activePlayer;
+		activePlayer = passivePlayer;
+		passivePlayer = swap;
+	}
+
 	private void congratulateWinner() {
-		if (!player1.isAlive()) {
-			console.writeMessage("The winner is " + player2.getName() + "\n CONGRATULATIONS \n\n");
+		if (!activePlayer.isAlive()) {
+			console.writeMessage("The winner is " + passivePlayer.getName() + "\n CONGRATULATIONS \n\n");
 		} else {
-			console.writeMessage("The winner is " + player1.getName() + "\n CONGRATULATIONS \n\n");
+			console.writeMessage("The winner is " + activePlayer.getName() + "\n CONGRATULATIONS \n\n");
 		}
 	}
 
@@ -64,62 +121,23 @@ public class Engine {
 		return playAgain.equals("YES");
 	}
 
-	private void playGame() {
-		while (isGameInProgress()) {
-			activePlayer.showBoards();
-			String shotPlacement = activePlayer.shoot();
-			if (!wantSaveGame(shotPlacement)) {
-				Field shotPlacementField = new Field(shotPlacement);
-				ShotResult shotResult = passivePlayer.checkShot(shotPlacementField);
-				if (shotResult.getHitMark() == ShotResult.ShotMark.SINK) {
-					passivePlayer.shipDeletion(shotResult.getShip());
-				}
-				activePlayer.markShot(shotResult, shotPlacementField);
-
-				if (shotResult.getHitMark() == ShotResult.ShotMark.MISS) {
-					console.writeMessage("MISS");
-					console.getChar();
-					Player swap = activePlayer;
-					activePlayer = passivePlayer;
-					passivePlayer = swap;
-					console.writeEnters();
-				} else if (shotResult.getHitMark() == ShotResult.ShotMark.HIT) {
-					console.writeMessage("HIT");
-				} else {
-					console.writeMessage("SINK");
-				}
-			} else {
-				saveGame(activePlayer);
-				saved = true;
-			}
-
-		}
-
-
-	}
-
 	private boolean isGameInProgress() {
-		return player1.isAlive() && player2.isAlive() && !saved;
-	}
-
-	private boolean wantSaveGame(String decision) {
-		return decision.equals("SAVE");
+		return activePlayer.isAlive() && passivePlayer.isAlive() && !saved;
 	}
 
 
-	private void saveGame(Player activePlayer) {
+	private void saveGame() {
+
 		GameState gameState = new GameState(
-				player1.save(player1 == activePlayer),
-				player2.save(player2 == activePlayer)
+				activePlayer.save(true),
+				passivePlayer.save(false)
 		);
 
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			byte[] bytes = objectMapper.writeValueAsBytes(gameState);
-			Files.write(
-					Paths.get("GameState.json"),
-					bytes
-			);
+			Files.write(GAME_STATE_PATH, bytes);
+			saved = true;
 		} catch (IOException e) {
 			System.err.println("Critical save error");
 		}
@@ -133,67 +151,43 @@ public class Engine {
 		return decision.equals("YES");
 	}
 
-	private void setupGame(boolean playAgain) {
-
-
-		GameState gameState = loadGame();
-		if (gameState != null && askIfLoadGame()) {
-
-
-			player1 = new Player(gameState.getPlayer1(), console);
-			player2 = new Player(gameState.getPlayer2(), console);
-
-			if (gameState.getPlayer1().isActive()) {
-				activePlayer = player1;
-				passivePlayer = player2;
-			} else {
-				activePlayer = player2;
-				passivePlayer = player1;
-			}
-		} else {
-			if(gameState != null) {
-				try {
-					Files.delete(Paths.get("GameState.json"));
-				} catch (IOException e) {
-					System.err.println("Nothing to delete");;
-				}
-			}
-
-			if (!playAgain) {
-				player1 = new Player(console.askForName(), console);
-				player2 = new Player(console.askForName(), console);
-			}
-
-			player1.prepareBoard();
-			console.getChar();
-			console.writeEnters();
-			player2.prepareBoard();
-			console.getChar();
-			console.writeEnters();
-			activePlayer = player1;
-			passivePlayer = player2;
-		}
-
-
+	private void preparePlayerBoard(Player player) {
+		player.prepareBoard();
+		console.getChar();
+		console.writeEnters();
 	}
 
-	private GameState loadGame() {
-
+	private void deleteGameStateIfExists() {
 		try {
-			byte[] bytes = Files.readAllBytes(Paths.get("GameState.json"));
+			Files.deleteIfExists(GAME_STATE_PATH);
+		} catch (IOException e) {
+		}
+	}
 
-			//GameState load = new GameState();
+	private void loadGame(GameState state) {
+		Player player1 = new Player(state.getPlayer1(), console);
+		Player player2 = new Player(state.getPlayer2(), console);
 
+		if (state.getPlayer1().isActive()) {
+			activePlayer = player1;
+			passivePlayer = player2;
+		} else {
+			activePlayer = player2;
+			passivePlayer = player1;
+		}
+	}
+
+
+	private Optional<GameState> loadGameStateFromFile() {
+		try {
+			byte[] bytes = Files.readAllBytes(GAME_STATE_PATH);
 			ObjectMapper objectMapper = new ObjectMapper();
-
-			return objectMapper.readValue(bytes, GameState.class);
-
+			return Optional.ofNullable(objectMapper.readValue(bytes, GameState.class));
 		} catch (IOException e) {
 			System.err.println("No previous game state");
 		}
 
-		return null;
-
+		return Optional.empty();
 	}
 
 }

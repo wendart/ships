@@ -3,7 +3,7 @@ package com.github.pbrzezinski.ships;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Board {
+public class Board { //TODO REFACTOR
 
 	public State markShot(Field shotPlacement) {
 		if (isFieldEmpty(shotPlacement)) {
