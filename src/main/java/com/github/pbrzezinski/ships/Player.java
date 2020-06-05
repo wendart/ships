@@ -7,20 +7,20 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-public class Player {//TODO REFACTOR głębszy
+public class Player {
 
 	private String name;
-	private Console console;
 	private Board ownBoard = new Board();
 	private Board enemyBoard = new Board();
 	private List<Ship> ships = new ArrayList<>();
+	private GameInterface gameInterface;
 
-	public Player(String name, Console console) {
+	public Player(String name, GameInterface gameInterface) {
 		this.name = name;
-		this.console = console;
+		this.gameInterface = gameInterface;
 	}
 
-	public Player(PlayerState playerState, Console console) {
+	public Player(PlayerState playerState, GameInterface gameInterface) {
 		this.ships = playerState.getShips().stream()
 				.map(FieldRange::new)
 				.map(Ship::new)// poprzednia notacja range -> new Ship(range)
@@ -29,7 +29,7 @@ public class Player {//TODO REFACTOR głębszy
 		this.name = playerState.getName();
 		this.ownBoard = new Board(playerState.getBoard());
 		this.enemyBoard = new Board(playerState.getRadar());
-		this.console = console;
+		this.gameInterface = gameInterface;
 	}
 
 
@@ -38,65 +38,20 @@ public class Player {//TODO REFACTOR głębszy
 	}
 
 	public void prepareBoard() {
-		Engine.SHIP_SPEC.forEach(shipSpec -> {
-			for (int i = 0; i < shipSpec.getShipCount(); i++) {
-				placeShip(shipSpec);
-				console.printBoard(ownBoard);
-			}
-		});
+		this.ships = gameInterface.prepareShips(name, ownBoard);
+		this.ships.forEach(ship -> ownBoard.placeShip(ship));
 	}
 
 	public boolean isAlive() {
 		return !ships.isEmpty();
 	}
 
-	private void placeShip(ShipSpec shipSpec) {
-		boolean done = false;
-
-		while (!done) {
-			try {
-				FieldRange shipPlacement = console.askForShipPlacement(shipSpec.getMastCount(), getName());
-				Ship ship = new Ship(shipPlacement);
-
-				if (ship.getSize() != shipSpec.getMastCount()) {
-					console.writeMessage("Bad ship size");
-				} else if (!isCollisionWithOther(ship)) {
-					ships.add(ship);
-					ownBoard.setFieldRangeState(shipPlacement, Board.State.MAST);
-					done = true;
-				} else {
-					console.writeMessage("This ship is in collision with other one on your board");
-				}
-
-			} catch (Exception ex) {
-				console.writeMessage(ex.getMessage());
-			}
-		}
-
-	}
-
-	private boolean isCollisionWithOther(Ship otherShip) {
-		return ships.stream()
-				.anyMatch(ship -> ship.isCollision(otherShip));
-	}
-
 	public void showBoards() {
-		console.printBoards(ownBoard, enemyBoard);
+		gameInterface.printBoards(ownBoard, enemyBoard);
 	}
 
 	public PlayerDecision makeDecisionShootOrSave() {
-		while (true) {
-			String shotPlacement = console.askForShot(name);
-			if (!shotPlacement.equals("SAVE")) {
-				if (enemyBoard.isFieldEmpty(new Field(shotPlacement))) {
-					return new PlayerDecision(shotPlacement);
-				}
-				console.writeMessage("You've already shot here ;) ");
-			} else {
-				return new PlayerDecision(shotPlacement);
-			}
-
-		}
+		return gameInterface.makeDecisionShootOrSave(name, enemyBoard);
 	}
 
 	public ShotResult checkShot(Field shotPlacement) {

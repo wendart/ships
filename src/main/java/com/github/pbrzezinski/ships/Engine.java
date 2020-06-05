@@ -24,6 +24,7 @@ public class Engine {// TODO WYDZIELIC KLASY
 	public static final Path GAME_STATE_PATH = Paths.get("GameState.json");
 
 	private final Console console = new Console();
+	private final GameInterface gameInterface = new GameInterface(console);
 	private Player passivePlayer;
 	private Player activePlayer;
 	private boolean saved = false;
@@ -54,8 +55,8 @@ public class Engine {// TODO WYDZIELIC KLASY
 		deleteGameStateIfExists();
 
 		if (!playAgain) {
-			activePlayer = new Player(console.askForName(), console);
-			passivePlayer = new Player(console.askForName(), console);
+			activePlayer = new Player(console.askForName(), gameInterface);
+			passivePlayer = new Player(console.askForName(), gameInterface);
 		}
 
 		preparePlayerBoard(activePlayer);
@@ -165,8 +166,8 @@ public class Engine {// TODO WYDZIELIC KLASY
 	}
 
 	private void loadGame(GameState state) {
-		Player player1 = new Player(state.getPlayer1(), console);
-		Player player2 = new Player(state.getPlayer2(), console);
+		Player player1 = new Player(state.getPlayer1(), gameInterface);
+		Player player2 = new Player(state.getPlayer2(), gameInterface);
 
 		if (state.getPlayer1().isActive()) {
 			activePlayer = player1;

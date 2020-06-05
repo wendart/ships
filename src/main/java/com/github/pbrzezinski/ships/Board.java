@@ -27,6 +27,10 @@ public class Board { //TODO REFACTOR
 		return state;
 	}
 
+	public void placeShip(Ship ship) {
+		setFieldRangeState(ship.getPlacement(),State.MAST);
+	}
+
 	public enum State {
 		MISS, HIT, MAST, EMPTY
 	}
