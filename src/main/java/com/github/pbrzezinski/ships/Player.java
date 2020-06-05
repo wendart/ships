@@ -5,7 +5,9 @@ import com.github.pbrzezinski.ships.state.PlayerState;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player {//TODO REFACTOR
+import static java.util.stream.Collectors.toList;
+
+public class Player {//TODO REFACTOR głębszy
 
 	private String name;
 	private Console console;
@@ -18,17 +20,15 @@ public class Player {//TODO REFACTOR
 		this.console = console;
 	}
 
-	public Player(PlayerState playerState, Console console){
-
-		List<Ship> ships = new ArrayList<>();
-		for (String ship : playerState.getShips()) {
-			ships.add(new Ship(new FieldRange(ship)));
-		}
+	public Player(PlayerState playerState, Console console) {
+		this.ships = playerState.getShips().stream()
+				.map(FieldRange::new)
+				.map(Ship::new)// poprzednia notacja range -> new Ship(range)
+				.collect(toList());
 
 		this.name = playerState.getName();
 		this.ownBoard = new Board(playerState.getBoard());
 		this.enemyBoard = new Board(playerState.getRadar());
-		this.ships = ships;
 		this.console = console;
 	}
 
@@ -38,23 +38,19 @@ public class Player {//TODO REFACTOR
 	}
 
 	public void prepareBoard() {
-
-		for (ShipSpec shipSpec : Engine.SHIP_SPEC) {
+		Engine.SHIP_SPEC.forEach(shipSpec -> {
 			for (int i = 0; i < shipSpec.getShipCount(); i++) {
 				placeShip(shipSpec);
 				console.printBoard(ownBoard);
 			}
-		}
+		});
 	}
-
-
 
 	public boolean isAlive() {
 		return !ships.isEmpty();
 	}
 
 	private void placeShip(ShipSpec shipSpec) {
-
 		boolean done = false;
 
 		while (!done) {
@@ -80,12 +76,8 @@ public class Player {//TODO REFACTOR
 	}
 
 	private boolean isCollisionWithOther(Ship otherShip) {
-		for (Ship ship : ships) {
-			if (ship.isCollision(otherShip)) {
-				return true;
-			}
-		}
-		return false;
+		return ships.stream()
+				.anyMatch(ship -> ship.isCollision(otherShip));
 	}
 
 	public void showBoards() {
@@ -95,7 +87,7 @@ public class Player {//TODO REFACTOR
 	public PlayerDecision makeDecisionShootOrSave() {
 		while (true) {
 			String shotPlacement = console.askForShot(name);
-			if(!shotPlacement.equals("SAVE")) {
+			if (!shotPlacement.equals("SAVE")) {
 				if (enemyBoard.isFieldEmpty(new Field(shotPlacement))) {
 					return new PlayerDecision(shotPlacement);
 				}
@@ -109,17 +101,15 @@ public class Player {//TODO REFACTOR
 
 	public ShotResult checkShot(Field shotPlacement) {
 		if (ownBoard.markShot(shotPlacement) == Board.State.MISS) {
-			return new ShotResult(ShotResult.ShotMark.MISS, null);
+			return ShotResult.miss();
 		}
 
-		for (Ship ship : ships) {
-			if (ship.getPlacement().getRangeFields().contains(shotPlacement)) {
-				if (isSink(ship)) {
-					return new ShotResult(ShotResult.ShotMark.SINK, ship);
-				}
-			}
-		}
-		return new ShotResult(ShotResult.ShotMark.HIT, null);
+		return ships.stream()
+				.filter(ship -> ship.getPlacement().getRangeFields().contains(shotPlacement))
+				.filter(this::isSink)
+				.findFirst()
+				.map(ShotResult::sink)
+				.orElseGet(ShotResult::hit);
 	}
 
 	public void shipDeletion(Ship ship) {
@@ -127,40 +117,30 @@ public class Player {//TODO REFACTOR
 	}
 
 	private boolean isSink(Ship ship) {
-		for (Field rangeField : ship.getPlacement().getRangeFields()) {
-			if (ownBoard.isFieldMast(rangeField)) {
-				return false;
-			}
-		}
-		return true;
+		return ship.getPlacement().getRangeFields().stream()
+				.noneMatch(ownBoard::isFieldMast);
 	}
 
 	public void markShot(ShotResult shotResult, Field shotPlacement) {
 		if (shotResult.getHitMark() == ShotResult.ShotMark.HIT) {
 			enemyBoard.setField(shotPlacement, Board.State.HIT);
-		} else if (shotResult.getHitMark() == ShotResult.ShotMark.SINK) {
-
+		} else if (shotResult.getHitMark() == ShotResult.ShotMark.MISS) {
+			enemyBoard.setField(shotPlacement, Board.State.MISS);
+		} else {
 			List<Field> shipPlacement = shotResult.getShip().getPlacement().getRangeFields();
 			List<Field> missFields = shotResult.getShip().getPlacement().extend().getRangeFields();
 			missFields.removeAll(shipPlacement);
 
-			for (Field field : missFields) {
-				enemyBoard.setField(field, Board.State.MISS);
-			}
-
+			missFields.forEach(field -> enemyBoard.setField(field, Board.State.MISS));
 			enemyBoard.setField(shotPlacement, Board.State.HIT);
-		} else {
-			enemyBoard.setField(shotPlacement, Board.State.MISS);
 		}
 	}
 
 
-	public PlayerState save(Boolean active){
-
-		List<String> stringShips = new ArrayList<>();
-		for (Ship ship : ships) {
-			stringShips.add(ship.getPlacement().getAsString());
-		}
+	public PlayerState save(Boolean active) {
+		List<String> stringShips = ships.stream()
+				.map(ship -> ship.getPlacement().getAsString())
+				.collect(toList());
 
 		return new PlayerState(
 				name,
