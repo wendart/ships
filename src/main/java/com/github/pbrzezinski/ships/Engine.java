@@ -17,7 +17,7 @@ public class Engine {// TODO WYDZIELIC KLASY
 	public final static List<ShipSpec> SHIP_SPEC = Arrays.asList(
 			//new com.github.pbrzezinski.ships.ShipSpec(1,4)
 			//new com.github.pbrzezinski.ships.ShipSpec(2,3),
-			//new com.github.pbrzezinski.ships.ShipSpec(3,2),
+			new com.github.pbrzezinski.ships.ShipSpec(3,2),
 			new ShipSpec(4, 1)
 	);
 

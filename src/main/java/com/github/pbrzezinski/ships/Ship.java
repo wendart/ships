@@ -2,6 +2,7 @@ package com.github.pbrzezinski.ships;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Ship {//TODO EW STREAM
@@ -18,14 +19,8 @@ public class Ship {//TODO EW STREAM
 	}
 
 	public boolean isCollision(Ship otherShip) {
-		List<Field> placementFields = placement.getRangeFields();
-		FieldRange extend = otherShip.placement.extend();
-		for (Field field : extend.getRangeFields()) {
-			if (placementFields.contains(field)) {
-				return true;
-			}
-		}
-		return false;
+		return otherShip.placement.extend().getRangeFields().stream()
+				.anyMatch(o -> placement.getRangeFields().contains(o));
 	}
 
 	public int getSize() {

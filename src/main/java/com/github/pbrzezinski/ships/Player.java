@@ -22,7 +22,7 @@ public class Player {
 
 	public Player(PlayerState playerState, GameInterface gameInterface) {
 		this.ships = playerState.getShips().stream()
-				.map(FieldRange::new)
+				.map(range -> new FieldRange(range))
 				.map(Ship::new)// poprzednia notacja range -> new Ship(range)
 				.collect(toList());
 
@@ -61,10 +61,10 @@ public class Player {
 
 		return ships.stream()
 				.filter(ship -> ship.getPlacement().getRangeFields().contains(shotPlacement))
-				.filter(this::isSink)
+				.filter(ship1 -> isSink(ship1))
 				.findFirst()
-				.map(ShotResult::sink)
-				.orElseGet(ShotResult::hit);
+				.map(ship2 -> ShotResult.sink(ship2))
+				.orElseGet(() -> ShotResult.hit());
 	}
 
 	public void shipDeletion(Ship ship) {
