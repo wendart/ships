@@ -1,4 +1,9 @@
-public class Board {
+package com.github.pbrzezinski.ships;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Board { //TODO REFACTOR
 
 	public State markShot(Field shotPlacement) {
 		if (isFieldEmpty(shotPlacement)) {
@@ -8,6 +13,22 @@ public class Board {
 			setField(shotPlacement, State.HIT);
 			return State.HIT;
 		}
+	}
+
+	public List<State> save() {
+		List<State> state = new ArrayList<>();
+
+		for (int y = 0; y < board.length; y++) {
+			for (int x = 0; x < board.length; x++) {
+				state.add(board[x][y]);
+			}
+		}
+
+		return state;
+	}
+
+	public void placeShip(Ship ship) {
+		setFieldRangeState(ship.getPlacement(),State.MAST);
 	}
 
 	public enum State {
@@ -21,6 +42,17 @@ public class Board {
 			for (int j = 0; j < board.length; j++) {
 				board[i][j] = State.EMPTY;
 			}
+		}
+	}
+
+	public Board(List<Board.State> places) {
+		int n = 0;
+
+		for (int y = 0; y < board.length; y++) {
+			for (int x = 0; x < board.length; x++) {
+				board[x][y] = places.get(x+n);
+			}
+			n = n +10;
 		}
 	}
 
@@ -44,14 +76,14 @@ public class Board {
 		StringBuilder sb = new StringBuilder();
 		sb.append("   A B C D E F G H I J \n");
 
-		for (int i = 0; i < board.length; i++) {
-			sb.append(String.format("%2s", i + 1)).append(" ");
-			for (int j = 0; j < board.length; j++) {
-				if (board[j][i] == State.EMPTY) {
+		for (int y = 0; y < board.length; y++) {
+			sb.append(String.format("%2s", y + 1)).append(" ");
+			for (int x = 0; x < board.length; x++) {
+				if (board[x][y] == State.EMPTY) {
 					sb.append("  ");
-				} else if (board[j][i] == State.MISS) {
+				} else if (board[x][y] == State.MISS) {
 					sb.append(GameChars.MISS + " ");
-				} else if (board[j][i] == State.HIT){
+				} else if (board[x][y] == State.HIT) {
 					sb.append(GameChars.SHIP_HIT + " ");
 				} else {
 					sb.append(GameChars.SHIP_MAST + " ");

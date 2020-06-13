@@ -1,3 +1,5 @@
+package com.github.pbrzezinski.ships;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -42,7 +44,7 @@ public class Field {
 
 	public Field(String field) {
 
-		Objects.requireNonNull(field, "Field can not be null");
+		Objects.requireNonNull(field, "com.github.pbrzezinski.ships.Field can not be null");
 		field = field.trim().toUpperCase();
 
 		if (field.length() < 2 || field.length() > 3) {

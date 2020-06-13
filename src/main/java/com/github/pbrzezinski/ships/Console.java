@@ -1,6 +1,8 @@
+package com.github.pbrzezinski.ships;
+
 import java.util.Scanner;
 
-public class Console {
+public class Console { //TODO REFACTOR
 
 	private Scanner scan = new Scanner(System.in);
 
@@ -48,14 +50,13 @@ public class Console {
 		}
 	}
 
-	public Field askForShot(String name) {
+	public String askForShot(String name) {
 		while (true) {
 			System.out.print("Where do you want to shoot " + name + "? ");
-			try {
-				return new Field(scan.nextLine());
-			} catch (Exception ex) {
-				System.out.println(ex.getMessage());
-			}
+			String string = scan.nextLine();
+			string = string.toUpperCase();
+			string = string.trim();
+			return string;
 		}
 	}
 
