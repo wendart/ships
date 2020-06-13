@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class FieldRange {
+public class FieldRange {// TODO SPR Z FIELDEM
 
 	private Field lowerBoundary;
 	private Field upperBoundary;
@@ -76,5 +76,10 @@ public class FieldRange {
 
 	public String getAsString() {
 		return lowerBoundary.getAsString() + ":" + upperBoundary.getAsString();
+	}
+
+	public String getAsString() {
+		return lowerBoundary.getAsString()
+				+ ":" + upperBoundary.getAsString();
 	}
 }
