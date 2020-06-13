@@ -1,11 +1,6 @@
 package com.github.pbrzezinski.ships;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class Ship {//TODO EW STREAM
+public class Ship {
 
 	private FieldRange placement;
 
@@ -14,7 +9,7 @@ public class Ship {//TODO EW STREAM
 
 		placement = shipPlacement;
 		if (!placement.isOneFieldWide()) {
-			throw new IllegalArgumentException("com.github.pbrzezinski.ships.Ship must be one field wide");
+			throw new IllegalArgumentException("Ship must be one field wide");
 		}
 	}
 

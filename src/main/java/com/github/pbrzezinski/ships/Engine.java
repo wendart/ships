@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class Engine {// TODO WYDZIELIC KLASY
+public class Engine {
 
 	public final static int BOARD_SIZE = 10;
 	public final static List<ShipSpec> SHIP_SPEC = Arrays.asList(
