@@ -2,7 +2,7 @@ package com.github.pbrzezinski.ships;
 
 import java.util.Scanner;
 
-public class Console { //TODO REFACTOR
+public class Console {
 
 	private Scanner scan = new Scanner(System.in);
 
