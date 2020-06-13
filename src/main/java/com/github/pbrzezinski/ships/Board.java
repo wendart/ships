@@ -17,7 +17,6 @@ public class Board { //TODO REFACTOR
 
 	public List<State> save() {
 		List<State> state = new ArrayList<>();
-
 		for (int y = 0; y < board.length; y++) {
 			for (int x = 0; x < board.length; x++) {
 				state.add(board[x][y]);
@@ -28,7 +27,7 @@ public class Board { //TODO REFACTOR
 	}
 
 	public void placeShip(Ship ship) {
-		setFieldRangeState(ship.getPlacement(),State.MAST);
+		setFieldRangeState(ship.getPlacement(), State.MAST);
 	}
 
 	public enum State {
@@ -50,9 +49,9 @@ public class Board { //TODO REFACTOR
 
 		for (int y = 0; y < board.length; y++) {
 			for (int x = 0; x < board.length; x++) {
-				board[x][y] = places.get(x+n);
+				board[x][y] = places.get(x + n);
 			}
-			n = n +10;
+			n = n + 10;
 		}
 	}
 

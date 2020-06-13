@@ -4,7 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Field {
+
+public class Field implements Comparable<Field> {
 
 	private static final Map<String, Integer> LETTERS_TO_NUMBERS;
 
@@ -43,35 +44,18 @@ public class Field {
 	private int y;
 
 	public Field(String field) {
-
-		Objects.requireNonNull(field, "com.github.pbrzezinski.ships.Field can not be null");
+		Objects.requireNonNull(field, "Field can not be null");
 		field = field.trim().toUpperCase();
 
-		if (field.length() < 2 || field.length() > 3) {
-			throw new IllegalArgumentException("Illegal field format: " + field);
-		}
-
+		validateFieldLength(field);
 		String letter = field.substring(0, 1);
 		String number = field.substring(1);
+		validateLetterInRange(letter);
 
-		if (!LETTERS_TO_NUMBERS.containsKey(letter.toUpperCase())) {
-			throw new IllegalArgumentException("Letter out of range: " + letter);
-		}
-
-		try {
-			this.y = Integer.parseInt(number);
-		} catch (Exception ex) {
-			throw new IllegalArgumentException("Illegal number format: " + number);
-		}
-
-		if (this.y > Engine.BOARD_SIZE || this.y <= 0) {
-			throw new IllegalArgumentException("Number out of range: " + this.y);
-		}
-
-		this.y--;
+		this.y = parseAndValidateNumber(number);
 		this.x = LETTERS_TO_NUMBERS.get(letter);
-
 	}
+
 
 	public Field(int x, int y) {
 		if (x < 0 || x >= Engine.BOARD_SIZE) {
@@ -98,16 +82,33 @@ public class Field {
 		return NUMBERS_TO_LETTERS.get(x) + (y + 1);
 	}
 
-	public FieldRange toRange() {
-		return new FieldRange(this);
+	private int parseAndValidateNumber(String number) {
+		try {
+			int parsedNumber = Integer.parseInt(number);
+			if (parsedNumber > Engine.BOARD_SIZE || parsedNumber <= 0) {
+				throw new IllegalArgumentException("Number out of range: " + parsedNumber);
+			}
+			return parsedNumber - 1;
+		} catch (NumberFormatException ex) {
+			throw new IllegalArgumentException("Illegal number format: " + number);
+		}
+
 	}
 
-	public Field nextVerticalField() {
-		return new Field(x, y + 1);
+	private void validateLetterInRange(String letter) {
+		if (!LETTERS_TO_NUMBERS.containsKey(letter.toUpperCase())) {
+			throw new IllegalArgumentException("Letter out of range: " + letter);
+		}
 	}
 
-	public Field nextHorizontalField() {
-		return new Field(x + 1, y);
+	private void validateFieldLength(String field) {
+		if (field.length() < 2 || field.length() > 3) {
+			throw new IllegalArgumentException("Illegal field format: " + field);
+		}
+	}
+
+	private int calculatePriority() {
+		return 10 * x + y;
 	}
 
 	@Override
@@ -122,5 +123,11 @@ public class Field {
 	@Override
 	public int hashCode() {
 		return Objects.hash(x, y);
+	}
+
+	@Override
+	public int compareTo(Field o) {
+		Objects.requireNonNull(o);
+		return this.calculatePriority() - o.calculatePriority();
 	}
 }

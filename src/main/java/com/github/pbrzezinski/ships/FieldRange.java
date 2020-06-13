@@ -14,30 +14,23 @@ public class FieldRange {// TODO SPR Z FIELDEM
 		Objects.requireNonNull(range, "Range can not be null");
 		range = range.trim();
 		String[] rangeParts = range.split(":");
-		if (rangeParts.length != 2) {
-			throw new IllegalArgumentException("Illegal range format: " + range);
-		}
+		validateFieldRangeFormat(range, rangeParts);
 
 		Field field1 = new Field(rangeParts[0]);
 		Field field2 = new Field(rangeParts[1]);
 
-
-		if (field1.getXCoordinate() == field2.getXCoordinate()) {
-			if (field1.getYCoordinate() > field2.getYCoordinate()) {
-				lowerBoundary = field2;
-				upperBoundary = field1;
-			} else {
-				lowerBoundary = field1;
-				upperBoundary = field2;
-			}
+		if (field1.compareTo(field2) < 0) {
+			lowerBoundary = field1;
+			upperBoundary = field2;
 		} else {
-			if (field1.getXCoordinate() > field2.getXCoordinate()) {
-				lowerBoundary = field2;
-				upperBoundary = field1;
-			} else {
-				lowerBoundary = field1;
-				upperBoundary = field2;
-			}
+			lowerBoundary = field2;
+			upperBoundary = field1;
+		}
+	}
+
+	private void validateFieldRangeFormat(String range, String[] rangeParts) {
+		if (rangeParts.length != 2) {
+			throw new IllegalArgumentException("Illegal range format: " + range);
 		}
 	}
 
@@ -64,9 +57,7 @@ public class FieldRange {// TODO SPR Z FIELDEM
 		List<Field> list = new ArrayList<>();
 		for (int y = lowerBoundary.getYCoordinate(); y <= upperBoundary.getYCoordinate(); y++) {
 			for (int x = lowerBoundary.getXCoordinate(); x <= upperBoundary.getXCoordinate(); x++) {
-
 				list.add(new Field(x, y));
-
 			}
 		}
 		return list;
@@ -83,15 +74,8 @@ public class FieldRange {// TODO SPR Z FIELDEM
 		return lowerBoundary.getXCoordinate() == upperBoundary.getXCoordinate() || lowerBoundary.getYCoordinate() == upperBoundary.getYCoordinate();
 	}
 
-	public List<Field> cutRange(List<Field> extendedField, List<Field> ship) {
-		for (Field field : extendedField) {
-			for (Field field1 : ship) {
-				if (field.equals(field1)) {
-					extendedField.remove(field);
-				}
-			}
-		}
-		return extendedField;
+	public String getAsString() {
+		return lowerBoundary.getAsString() + ":" + upperBoundary.getAsString();
 	}
 
 	public String getAsString() {
