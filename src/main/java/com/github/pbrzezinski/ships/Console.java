@@ -1,5 +1,7 @@
 package com.github.pbrzezinski.ships;
 
+import com.github.pbrzezinski.ships.console.ConsoleSpec;
+
 import java.util.Scanner;
 
 public class Console {
@@ -12,19 +14,30 @@ public class Console {
 	}
 
 	public FieldRange askForShipPlacement(int shipSize, String name) {
-		while (true) {
-			System.out.print(name + ", please place " + shipSize + " mast ship: ");
-			String placement = scan.nextLine();
-			try {
-				if (shipSize == 1) {
-					return new FieldRange(new Field(placement));
-				} else {
-					return new FieldRange(placement);
-				}
-			} catch (Exception ex) {
-				System.out.println(ex.getMessage());
-			}
-		}
+
+		return ConsoleSpec.<FieldRange>askFor(name + ", please place " + shipSize + " mast ship: ")
+				.map(placement -> {
+					if (shipSize == 1) {
+						return new FieldRange(new Field(placement));
+					} else {
+						return new FieldRange(placement);
+					}
+				})
+				.execute();
+
+//		while (true) {
+//			System.out.print(name + ", please place " + shipSize + " mast ship: ");
+//			String placement = scan.nextLine();
+//			try {
+//				if (shipSize == 1) {
+//					return new FieldRange(new Field(placement));
+//				} else {
+//					return new FieldRange(placement);
+//				}
+//			} catch (Exception ex) {
+//				System.out.println(ex.getMessage());
+//			}
+//		}
 	}
 
 	public void writeMessage(String message) {
