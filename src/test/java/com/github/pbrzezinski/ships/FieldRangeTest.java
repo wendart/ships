@@ -1,6 +1,11 @@
 package com.github.pbrzezinski.ships;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -16,52 +21,38 @@ class FieldRangeTest {
 				.containsExactly(new Field("A1"), new Field("A2"), new Field("A3")); //tylko kiedy mam equals
 	}
 
-	@Test
-	void shouldProperlyCreateOneFieldWideHorizontalFieldRange() {
-		FieldRange range = new FieldRange("A1:C1");
+	@ParameterizedTest
+	@CsvSource(value = {"A1:C1,A1,C1", "A1:A3,A1,A3", "A1:H8,A1,H8","H8:H8,H8,H8", "H8:A1,A1,H8", "B2:D4,B2,D4", "A1:C2,A1,C2","c3:i7,C3,I7"})
+	void shouldProperlyCreateFieldRange(String testedValue, String expectedLowerBoundary, String expectedUpperBoundary) {
+		FieldRange range = new FieldRange(testedValue);
 
-		assertThat(range.getLowerBoundary()).isEqualTo(new Field("A1"));
-		assertThat(range.getUpperBoundary()).isEqualTo(new Field("C1"));
+		assertThat(range.getLowerBoundary()).isEqualTo(new Field(expectedLowerBoundary));
+		assertThat(range.getUpperBoundary()).isEqualTo(new Field(expectedUpperBoundary));
 	}
 
-	@Test
-	void shouldProperlyCreateOneFieldWideVerticalFieldRange() {
-		FieldRange range = new FieldRange("A1:A3");
-
-		assertThat(range.getLowerBoundary()).isEqualTo(new Field("A1"));
-		assertThat(range.getUpperBoundary()).isEqualTo(new Field("A3"));
-	}
-
-	@Test
-	void shouldProperlyCreateFieldRange() {
-		FieldRange range = new FieldRange("A1:H8");
-
-		assertThat(range.getLowerBoundary()).isEqualTo(new Field("A1"));
-		assertThat(range.getUpperBoundary()).isEqualTo(new Field("H8"));
-	}
-
-	@Test
-	void shouldProperlyCreateOneFieldFieldRange() {
-		FieldRange range = new FieldRange("H8:H8");
-
-		assertThat(range.getLowerBoundary()).isEqualTo(new Field("H8"));
-		assertThat(range.getUpperBoundary()).isEqualTo(new Field("H8"));
-	}
-
-	@Test
-	void shouldThrowExtensionIllegalFieldFormat() {
+	@ParameterizedTest(name = "Should throw exception for field format: {0}")
+	@ValueSource(strings = {"A1:", "g", "X:33", "V34:F45" , ":A4", "  ", "", "\n"})
+	void shouldThrowExceptionIllegalFieldFormat(String testedValue) {
 		assertThrows(
 				IllegalArgumentException.class,
-				()-> new FieldRange("A1:")
+				()-> new FieldRange(testedValue)
 		);
 	}
 
 	@Test
-	void shouldProperlyCreateInvertedFieldRange() {
-		FieldRange range = new FieldRange("H8:A1");
+	void shouldThrowNullptrExceptionWhenUsedFieldConstructor() {
+		assertThrows(
+				NullPointerException.class,
+				()-> new FieldRange((Field) null)
+		);
+	}
 
-		assertThat(range.getLowerBoundary()).isEqualTo(new Field("A1"));
-		assertThat(range.getUpperBoundary()).isEqualTo(new Field("H8"));
+	@Test
+	void shouldThrowNullptrExceptionWhenUsedStringConstructor() {
+		assertThrows(
+				NullPointerException.class,
+				()-> new FieldRange((String) null)
+		);
 	}
 
 	@Test
@@ -94,14 +85,6 @@ class FieldRangeTest {
 		FieldRange range = new FieldRange("D1:d3");
 
 		assertThat(range.getAsString()).isEqualTo("D1:D3");
-	}
-
-	@Test
-	void shouldProperlyCreateFieldRangeFromLowerCase() {
-		FieldRange range = new FieldRange("c3:i7");
-
-		assertThat(range.getLowerBoundary()).isEqualTo(new Field("C3"));
-		assertThat(range.getUpperBoundary()).isEqualTo(new Field("I7"));
 	}
 }
 
