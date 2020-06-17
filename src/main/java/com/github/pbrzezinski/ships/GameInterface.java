@@ -1,8 +1,16 @@
 package com.github.pbrzezinski.ships;
 
+import com.github.pbrzezinski.ships.console.ConsoleSpec;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+//1. Walidacja
+//2. Wypisanie błędnych wiadomości
+//3. Iteracja po czymś
+//4. Iteracja do skutku
+//5.
 
 public class GameInterface {
 
@@ -26,19 +34,26 @@ public class GameInterface {
 		return ships;
 	}
 
-	public PlayerDecision makeDecisionShootOrSave(String playerName, Board enemyBoard) {
-		while (true) {
-			PlayerDecision decision = new PlayerDecision(console.askForShot(playerName));
-			if (decision.isSaveGame()) {
-				return decision;
-			} else if (enemyBoard.isFieldEmpty(decision.toField())) {
-				return decision;
-			} else {
-				console.writeMessage("You've already shot here ;) ");
-			}
-		}
-
+	public PlayerDecision makeDecisionShootOrSave(String name, Board enemyBoard) {
+		return ConsoleSpec.<PlayerDecision>askFor("Where do you want to shoot " + name + "? ")
+				.map(PlayerDecision::new)
+				.validate(pd -> pd.isSaveGame() || enemyBoard.isFieldEmpty(pd.toField()))
+				.execute();
 	}
+
+//	public PlayerDecision makeDecisionShootOrSave(String playerName, Board enemyBoard) {
+//		while (true) {
+//			PlayerDecision decision = new PlayerDecision(console.askForShot(playerName));
+//			if (decision.isSaveGame()) {
+//				return decision;
+//			} else if (enemyBoard.isFieldEmpty(decision.toField())) {
+//				return decision;
+//			} else {
+//				console.writeMessage("You've already shot here ;) ");
+//			}
+//		}
+//
+//	}
 
 	private Ship placeShip(ShipSpec shipSpec, List<Ship> currentShips, String playerName) {
 		while (true) {
@@ -77,7 +92,7 @@ public class GameInterface {
 
 
 	public void printBoards(Board ownBoard, Board enemyBoard) {
-		console.printBoards(ownBoard,enemyBoard);
+		console.printBoards(ownBoard, enemyBoard);
 	}
 }
 

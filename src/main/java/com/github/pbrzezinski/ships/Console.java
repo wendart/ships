@@ -51,13 +51,19 @@ public class Console {
 	}
 
 	public String askForShot(String name) {
-		while (true) {
-			System.out.print("Where do you want to shoot " + name + "? ");
-			String string = scan.nextLine();
-			string = string.toUpperCase();
-			string = string.trim();
-			return string;
-		}
+		System.out.print("Where do you want to shoot " + name + "? ");
+		String string = scan.nextLine();
+		string = string.toUpperCase();
+		string = string.trim();
+		return string;
+	}
+
+	public String getInput(String msg) {
+		System.out.print(msg);
+		String string = scan.nextLine();
+		string = string.toUpperCase();
+		string = string.trim();
+		return string;
 	}
 
 	public void getChar() {
