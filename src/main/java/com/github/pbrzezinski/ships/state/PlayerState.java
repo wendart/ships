@@ -2,8 +2,7 @@ package com.github.pbrzezinski.ships.state;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.pbrzezinski.ships.Board;
-import com.github.pbrzezinski.ships.Ship;
+import com.github.pbrzezinski.ships.board.Board;
 
 import java.util.List;
 

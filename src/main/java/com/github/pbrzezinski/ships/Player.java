@@ -1,5 +1,6 @@
 package com.github.pbrzezinski.ships;
 
+import com.github.pbrzezinski.ships.board.Board;
 import com.github.pbrzezinski.ships.state.PlayerState;
 
 import java.util.ArrayList;

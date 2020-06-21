@@ -1,4 +1,9 @@
-package com.github.pbrzezinski.ships;
+package com.github.pbrzezinski.ships.board;
+
+import com.github.pbrzezinski.ships.Field;
+import com.github.pbrzezinski.ships.FieldRange;
+import com.github.pbrzezinski.ships.GameChars;
+import com.github.pbrzezinski.ships.Ship;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +40,10 @@ public class Board {
 	}
 
 	private State[][] board = new State[10][10];
+
+	State[][] getBoard() {
+		return board;
+	}
 
 	public Board() {
 		for (int i = 0; i < board.length; i++) {
