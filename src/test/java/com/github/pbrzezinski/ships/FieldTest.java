@@ -2,57 +2,29 @@ package com.github.pbrzezinski.ships;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FieldTest {
 
-	@Test
-	void shouldProperlyCreateField() {
-		Field field = new Field("A1");
+	@ParameterizedTest
+	@CsvSource(value = {"A1,0,0", "d5,3,4", " d5 ,3,4",})
+	void shouldProperlyCreateField(String testedValue, int expectedXCoordinate, int expectedYCoordinate) {
+		Field field = new Field(testedValue);
 
-		assertThat(field.getXCoordinate()).isEqualTo(0);
-		assertThat(field.getYCoordinate()).isEqualTo(0);
+		assertThat(field.getXCoordinate()).isEqualTo(expectedXCoordinate);
+		assertThat(field.getYCoordinate()).isEqualTo(expectedYCoordinate);
 	}
 
-	@Test
-	void shouldThrowExceptionWhenLetterOutOfRange() {
+	@ParameterizedTest
+	@ValueSource(strings = {"P1", "A11", "U21", "6", "D"})
+	void shouldThrowExceptionWhenLetterOutOfRange(String testedValue) {
 		assertThrows(
 				IllegalArgumentException.class,
-				() -> new Field("P1")
-		);
-	}
-
-	@Test
-	void shouldThrowExceptionWhenNumberOutOfRange() {
-		assertThrows(
-				IllegalArgumentException.class,
-				() -> new Field("A11")
-		);
-	}
-
-	@Test
-	void shouldThrowExceptionWhenNumberAndLetterOutOfRange() {
-		assertThrows(
-				IllegalArgumentException.class,
-				() -> new Field("U21")
-		);
-	}
-
-	@Test
-	void shouldThrowExceptionWhenNoLetterIsPresent() {
-		assertThrows(
-				IllegalArgumentException.class,
-				() -> new Field("6")
-		);
-	}
-
-	@Test
-	void shouldThrowExceptionWhenNoNumberIsPresent() {
-		assertThrows(
-				IllegalArgumentException.class,
-				() -> new Field("D")
+				() -> new Field(testedValue)
 		);
 	}
 
@@ -73,24 +45,8 @@ class FieldTest {
 	}
 
 	@Test
-	void shouldProperlyCreateFieldFromLowerCase() {
-		Field field = new Field("d5");
-
-		assertThat(field.getXCoordinate()).isEqualTo(3);
-		assertThat(field.getYCoordinate()).isEqualTo(4);
-	}
-
-	@Test
 	void shouldProperlyCreateFieldFromCoordinates() {
 		Field field = new Field(3,4);
-
-		assertThat(field.getXCoordinate()).isEqualTo(3);
-		assertThat(field.getYCoordinate()).isEqualTo(4);
-	}
-
-	@Test
-	void shouldProperlyCreateFieldWhenWhiteSpace() {
-		Field field = new Field(" d5 ");
 
 		assertThat(field.getXCoordinate()).isEqualTo(3);
 		assertThat(field.getYCoordinate()).isEqualTo(4);
