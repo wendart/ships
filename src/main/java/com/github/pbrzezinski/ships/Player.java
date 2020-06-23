@@ -16,12 +16,22 @@ public class Player {
 	private List<Ship> ships = new ArrayList<>();
 	private GameInterface gameInterface;
 
-	public Player(String name, GameInterface gameInterface) {
-		this.name = name;
-		this.gameInterface = gameInterface;
+	public static Player createPlayer(String name, GameInterface gameInterface){
+		return new Player(name, gameInterface, new Board(), new Board());
 	}
 
-	public Player(PlayerState playerState, GameInterface gameInterface) {
+	Player(String name, GameInterface gameInterface, Board enemyBoard, Board ownBoard) {
+		this.name = name;
+		this.gameInterface = gameInterface;
+		this.ownBoard = ownBoard;
+		this.enemyBoard = enemyBoard;
+	}
+
+	public static Player createPlayerFromGameState(PlayerState state, GameInterface gameInterface){
+		return new Player(state,gameInterface);
+	}
+
+	private Player(PlayerState playerState, GameInterface gameInterface) {
 		this.ships = playerState.getShips().stream()
 				.map(range -> new FieldRange(range))
 				.map(Ship::new)// poprzednia notacja range -> new Ship(range)
@@ -55,17 +65,23 @@ public class Player {
 		return gameInterface.makeDecisionShootOrSave(name, enemyBoard);
 	}
 
-	public ShotResult checkShot(Field shotPlacement) {
+	public ShotResult takeShot(Field shotPlacement) {
 		if (ownBoard.markShot(shotPlacement) == Board.State.MISS) {
 			return ShotResult.miss();
 		}
 
-		return ships.stream()
+		ShotResult shotResult = ships.stream()
 				.filter(ship -> ship.getPlacement().getRangeFields().contains(shotPlacement))
 				.filter(ship1 -> isSink(ship1))
 				.findFirst()
 				.map(ship2 -> ShotResult.sink(ship2))
 				.orElseGet(() -> ShotResult.hit());
+
+		if(shotResult.getHitMark() == ShotResult.ShotMark.SINK){
+			shipDeletion(shotResult.getShip());
+		}
+
+		return shotResult;
 	}
 
 	public void shipDeletion(Ship ship) {

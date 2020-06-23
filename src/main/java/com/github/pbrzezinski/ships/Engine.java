@@ -55,8 +55,8 @@ public class Engine {
 		deleteGameStateIfExists();
 
 		if (!playAgain) {
-			activePlayer = new Player(console.askForName(), gameInterface);
-			passivePlayer = new Player(console.askForName(), gameInterface);
+			activePlayer = Player.createPlayer(console.askForName(), gameInterface);
+			passivePlayer = Player.createPlayer(console.askForName(), gameInterface);
 		}
 
 		preparePlayerBoard(activePlayer);
@@ -78,9 +78,8 @@ public class Engine {
 		}
 
 		Field shotPlacementField = decision.toField();
-		ShotResult shotResult = passivePlayer.checkShot(shotPlacementField);
+		ShotResult shotResult = passivePlayer.takeShot(shotPlacementField);
 		if (shotResult.getHitMark() == ShotResult.ShotMark.SINK) {
-			passivePlayer.shipDeletion(shotResult.getShip());
 			console.writeMessage("SINK");
 		}
 
@@ -166,8 +165,8 @@ public class Engine {
 	}
 
 	private void loadGame(GameState state) {
-		Player player1 = new Player(state.getPlayer1(), gameInterface);
-		Player player2 = new Player(state.getPlayer2(), gameInterface);
+		Player player1 = Player.createPlayerFromGameState(state.getPlayer1(), gameInterface);
+		Player player2 = Player.createPlayerFromGameState(state.getPlayer2(), gameInterface);
 
 		if (state.getPlayer1().isActive()) {
 			activePlayer = player1;
