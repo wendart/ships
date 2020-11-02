@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class FieldRange {// TODO SPR Z FIELDEM
+public class FieldRange {// TODO zrobić testy założenie -> Field działa
 
 	private Field lowerBoundary;
 	private Field upperBoundary;
 
 	public FieldRange(String range) {
-
 		Objects.requireNonNull(range, "Range can not be null");
 		range = range.trim();
 		String[] rangeParts = range.split(":");
@@ -35,6 +34,7 @@ public class FieldRange {// TODO SPR Z FIELDEM
 	}
 
 	public FieldRange(Field field) {
+		Objects.requireNonNull(field, "Field can not be null");
 		this.lowerBoundary = field;
 		this.upperBoundary = field;
 	}
@@ -76,10 +76,5 @@ public class FieldRange {// TODO SPR Z FIELDEM
 
 	public String getAsString() {
 		return lowerBoundary.getAsString() + ":" + upperBoundary.getAsString();
-	}
-
-	public String getAsString() {
-		return lowerBoundary.getAsString()
-				+ ":" + upperBoundary.getAsString();
 	}
 }

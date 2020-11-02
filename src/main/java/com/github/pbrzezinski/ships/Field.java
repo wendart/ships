@@ -108,7 +108,7 @@ public class Field implements Comparable<Field> {
 	}
 
 	private int calculatePriority() {
-		return 10 * x + y;
+		return 10 * y + x;
 	}
 
 	@Override
