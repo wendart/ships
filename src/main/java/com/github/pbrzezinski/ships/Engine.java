@@ -39,6 +39,7 @@ public class Engine {
 				console.writeMessage("Thanks for playing, your game is saved for next time");
 			} else {
 				congratulateWinner();
+				deleteGameStateIfExists();
 				playAgain = askIfPlayAgain();
 			}
 		} while (playAgain);

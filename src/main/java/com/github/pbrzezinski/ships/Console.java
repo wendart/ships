@@ -25,20 +25,6 @@ public class Console {
 					}
 				})
 				.execute();
-
-//		while (true) {
-//			System.out.print(name + ", please place " + shipSize + " mast ship: ");
-//			String placement = scan.nextLine();
-//			try {
-//				if (shipSize == 1) {
-//					return new FieldRange(new Field(placement));
-//				} else {
-//					return new FieldRange(placement);
-//				}
-//			} catch (Exception ex) {
-//				System.out.println(ex.getMessage());
-//			}
-//		}
 	}
 
 	public void writeMessage(String message) {
