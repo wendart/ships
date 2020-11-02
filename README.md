@@ -1,1 +1,1 @@
-# Statki
+Basic console based ships game
