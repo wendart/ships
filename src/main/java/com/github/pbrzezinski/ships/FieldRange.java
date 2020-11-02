@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class FieldRange {// TODO zrobić testy założenie -> Field działa
+public class FieldRange {
 
 	private Field lowerBoundary;
 	private Field upperBoundary;

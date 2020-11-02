@@ -7,12 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-//1. Walidacja
-//2. Wypisanie błędnych wiadomości
-//3. Iteracja po czymś
-//4. Iteracja do skutku
-//5.
-
 public class GameInterface {
 
 	private Console console;
@@ -41,25 +35,6 @@ public class GameInterface {
 				.validate(pd -> pd.isSaveGame() || enemyBoard.isFieldEmpty(pd.toField()))
 				.execute();
 	}
-
-//	public PlayerDecision makeDecisionShootOrSave(String playerName, Board enemyBoard) {
-//		while (true) {
-//			PlayerDecision decision = new PlayerDecision(console.askForShot(playerName));
-//			if (decision.isSaveGame()) {
-//				return decision;
-//			} else if (enemyBoard.isFieldEmpty(decision.toField())) {
-//				return decision;
-//			} else {
-//				console.writeMessage("You've already shot here ;) ");
-//			}
-//		}
-//
-//	}
-
-
-//	private Ship placeShip(ShipSpec shipSpec, List<Ship> currentShips, String playerName) {
-//
-//	}
 
 	private Ship placeShip(ShipSpec shipSpec, List<Ship> currentShips, String playerName) {
 		while (true) {

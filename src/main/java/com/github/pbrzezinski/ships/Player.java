@@ -34,7 +34,7 @@ public class Player {
 	private Player(PlayerState playerState, GameInterface gameInterface) {
 		this.ships = playerState.getShips().stream()
 				.map(range -> new FieldRange(range))
-				.map(Ship::new)// poprzednia notacja range -> new Ship(range)
+				.map(Ship::new)
 				.collect(toList());
 
 		this.name = playerState.getName();

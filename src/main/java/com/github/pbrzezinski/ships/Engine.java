@@ -15,9 +15,9 @@ public class Engine {
 
 	public final static int BOARD_SIZE = 10;
 	public final static List<ShipSpec> SHIP_SPEC = Arrays.asList(
-			//new com.github.pbrzezinski.ships.ShipSpec(1,4)
-			//new com.github.pbrzezinski.ships.ShipSpec(2,3),
-			//new com.github.pbrzezinski.ships.ShipSpec(3,2),
+			new ShipSpec(1,4),
+			new ShipSpec(2,3),
+			new ShipSpec(3,2),
 			new ShipSpec(4, 1)
 	);
 
